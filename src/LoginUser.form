@@ -239,37 +239,33 @@
                   <text value="cancel"/>
                 </properties>
               </component>
-              <component id="797c5" class="javax.swing.JButton" binding="b_open4">
+              <component id="797c5" class="javax.swing.JButton" binding="b_add4">
                 <constraints>
                   <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
-                  <text value="open"/>
+                  <text value="add"/>
                 </properties>
               </component>
             </children>
           </grid>
-          <grid id="3e295" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+          <grid id="3e295" layout-manager="GridLayoutManager" row-count="1" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
             <margin top="0" left="0" bottom="0" right="0"/>
             <constraints border-constraint="North"/>
             <properties/>
             <border type="none"/>
             <children>
-              <component id="e740b" class="javax.swing.JComboBox" binding="cb_date4">
+              <component id="2104f" class="javax.swing.JTextField" binding="t_title4">
                 <constraints>
-                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="2" anchor="8" fill="1" indent="0" use-parent-layout="false"/>
+                  <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                    <preferred-size width="150" height="-1"/>
+                  </grid>
                 </constraints>
-                <properties/>
+                <properties>
+                  <toolTipText value="title"/>
+                </properties>
               </component>
-            </children>
-          </grid>
-          <grid id="b8f9c" binding="l_date_last_edition4" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
-            <margin top="0" left="0" bottom="0" right="0"/>
-            <constraints border-constraint="Center"/>
-            <properties/>
-            <border type="none"/>
-            <children>
-              <component id="543ba" class="javax.swing.JLabel">
+              <component id="58169" class="javax.swing.JLabel" binding="l_data4">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -279,6 +275,13 @@
               </component>
             </children>
           </grid>
+          <component id="a5117" class="javax.swing.JTextArea" binding="t_a_diary4">
+            <constraints border-constraint="Center"/>
+            <properties>
+              <lineWrap value="false"/>
+              <wrapStyleWord value="false"/>
+            </properties>
+          </component>
         </children>
       </grid>
       <grid id="a8225" binding="edit_diaryPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
@@ -341,16 +344,7 @@
             <constraints border-constraint="Center"/>
             <properties/>
             <border type="none"/>
-            <children>
-              <component id="a15e8" class="javax.swing.JTextArea" binding="t_words5">
-                <constraints>
-                  <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
-                    <preferred-size width="150" height="50"/>
-                  </grid>
-                </constraints>
-                <properties/>
-              </component>
-            </children>
+            <children/>
           </grid>
         </children>
       </grid>

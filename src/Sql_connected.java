@@ -33,7 +33,33 @@ public class Sql_connected
             System.out.println(e);
         }finally
         {
-            System.out.println("create table complete");
+            System.out.println("create Table_window_log complete");
+        }
+    }
+    public void createTable_diary_text() throws Exception
+    {
+        try{
+            Connection con = getConnection();
+            PreparedStatement create = con.prepareStatement("CREATE TABLE IF NOT EXISTS diary_text(id_diary_text int NOT NULL AUTO_INCREMENT, date varchar(19), title varchar(40), text_diary TEXT, PRIMARY KEY(id_diary_text))");
+            create.executeUpdate();
+        }catch (Exception e){
+            System.out.println(e);
+        }finally
+        {
+            System.out.println("create Table_diary complete");
+        }
+    }
+    public void createTable_edit_diary() throws Exception
+    {
+        try{
+            Connection con = getConnection();
+            PreparedStatement create = con.prepareStatement("CREATE TABLE IF NOT EXISTS diary_edit(id_edit int NOT NULL AUTO_INCREMENT, id int, id_diary_text int, data_edit varchar(20), PRIMARY KEY(id_edit))");
+            create.executeUpdate();
+        }catch (Exception e){
+            System.out.println(e);
+        }finally
+        {
+            System.out.println("create Table_edit_diary complete");
         }
     }
     public void post(String m_login, String m_password) throws Exception
@@ -44,6 +70,36 @@ public class Sql_connected
         try{
             Connection con = getConnection();
             PreparedStatement post = con.prepareStatement("INSERT INTO window_log (login, password) VALUES ('"+login+"', '"+password+"')");
+            post.executeUpdate();
+        }catch (Exception e){
+            System.out.println(e);
+        }finally
+        {
+            System.out.println("insert complete");
+        }
+    }
+    public void post_diary(String m_title, String m_text_diary, String m_date) throws Exception
+    {
+        String title = m_title;
+        String text_diary = m_text_diary;
+        String date = m_date;
+
+        try{
+            Connection con = getConnection();
+            PreparedStatement post = con.prepareStatement("INSERT INTO diary_text VALUES (NULL, '"+date+"', '"+title+"', '"+text_diary+"')");
+            post.executeUpdate();
+        }catch (Exception e){
+            System.out.println(e);
+        }finally
+        {
+            System.out.println("insert complete");
+        }
+    }
+    public void post_edit_diary(int id_, int id_diary_text, String m_date) throws Exception
+    {
+        try{
+            Connection con = getConnection();
+            PreparedStatement post = con.prepareStatement("INSERT INTO diary_edit VALUES (NULL, '"+id_+"', '"+id_diary_text+"', '"+m_date+"')");
             post.executeUpdate();
         }catch (Exception e){
             System.out.println(e);
@@ -74,5 +130,40 @@ public class Sql_connected
         }
         return flag_login_and_password;
     }
+    public int get_id(String login_user) throws Exception
+    {
+        int id=0;
+        try{
+            Connection con = getConnection();
+            PreparedStatement get = con.prepareStatement("SELECT * FROM window_log WHERE login='"+login_user+"'");
+            ResultSet result = get.executeQuery();
+            while (result.next())
+            {
+               id = result.getInt("id");
+
+            }
+        }catch (Exception e){
+            System.out.println(e);
+        }
+        return id;
+    }
+    public int get_id_diary_text(String title) throws Exception
+    {
+        int id=0;
+        try{
+            Connection con = getConnection();
+            PreparedStatement get = con.prepareStatement("SELECT * FROM diary_text WHERE title='"+title+"'");
+            ResultSet result = get.executeQuery();
+            while (result.next())
+            {
+                id = result.getInt("id_diary_text");
+
+            }
+        }catch (Exception e){
+            System.out.println(e);
+        }
+        return id;
+    }
+
 
 }
