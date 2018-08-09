@@ -2,6 +2,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 
 public class Sql_connected
 {
@@ -164,6 +165,106 @@ public class Sql_connected
         }
         return id;
     }
+    public ArrayList<String> get_date_from_date_text(String user) throws Exception
+    {
+        ArrayList<String> table = new ArrayList<>();
+        String data_before = ".";
+        String data_after;
+        try{
+            Connection con = getConnection();
+            PreparedStatement get = con.prepareStatement("SELECT diary_text.date FROM diary_text, diary_edit, window_log" +
+                                                                 " WHERE window_log.login='"+user+"' and window_log.id = diary_edit.id and " +
+                                                                 "diary_edit.id_diary_text = diary_text.id_diary_text");
+            ResultSet result = get.executeQuery();
+            while (result.next())
+            {
+                data_after = result.getString("date");
+                data_after = data_after.substring(0, 10);
+                if(!data_after.equals(data_before))
+                {
+                    table.add(data_after);
+                    data_before = data_after;
+                }
 
 
+            }
+        }catch (Exception e){
+            System.out.println(e);
+        }
+        return table;
+    }
+    public ArrayList<String> get_title_from_date_text(String date1) throws Exception
+    {
+        ArrayList<String> table = new ArrayList<>();
+        try{
+            Connection con = getConnection();
+            PreparedStatement get = con.prepareStatement("SELECT diary_text.title FROM diary_text WHERE date LIKE '"+date1+'%'+"'");
+            ResultSet result = get.executeQuery();
+            while (result.next())
+            {
+                table.add(result.getString("title"));
+
+            }
+        }catch (Exception e){
+            System.out.println(e);
+        }
+        return table;
+    }
+    public String get_last_data_eition(String title1) throws Exception
+    {
+        String data_edition = "";
+        try{
+            Connection con = getConnection();
+            PreparedStatement get = con.prepareStatement("SELECT diary_edit.data_edit FROM diary_edit, diary_text WHERE " +
+                                                                 "diary_text.title = '"+title1+"' and diary_text.id_diary_text = diary_edit.id_diary_text");
+            ResultSet result = get.executeQuery();
+            while (result.next())
+            {
+                data_edition = result.getString("data_edit");
+
+            }
+        }catch (Exception e){
+            System.out.println(e);
+        }
+        return data_edition;
+    }
+    public String get_diary_text(String title1) throws Exception
+    {
+        String diary_text = "";
+        try
+        {
+            Connection con = getConnection();
+            PreparedStatement get = con.prepareStatement("SELECT diary_text.text_diary FROM diary_text WHERE " +
+                                                                 "diary_text.title = '" + title1 + "'");
+            ResultSet result = get.executeQuery();
+            while (result.next())
+            {
+                diary_text = result.getString("text_diary");
+
+            }
+        } catch (Exception e)
+        {
+            System.out.println(e);
+        }
+        return diary_text;
+    }
+    public String update_diary_text(String title1, String date1, String text_diary) throws Exception
+    {
+        String diary_text = "";
+        try
+        {
+            Connection con = getConnection();
+            PreparedStatement update = con.prepareStatement("UPDATE diary_text SET diary_text.text_diary = '"+text_diary+"' WHERE diary_text.title = '"+title1+"'");
+            update.executeUpdate();
+            update = con.prepareStatement("UPDATE diary_edit INNER JOIN diary_text ON diary_text.id_diary_text=diary_edit.id_diary_text" +
+                                                  " AND diary_text.title = '"+title1+"' " +
+                                                  "SET diary_edit.data_edit = '"+date1+"'");
+            update.executeUpdate();
+
+        } catch (Exception e)
+        {
+            System.out.println(e);
+        }
+        return diary_text;
+    }
 }

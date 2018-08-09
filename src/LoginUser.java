@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -9,6 +10,7 @@ public class LoginUser
 {
     Sql_connected sql_connected;
     String login_name;
+    boolean flag_edit;
     private JPanel panel1;
     private JPanel loginPanel;
     private JPanel registerPanel;
@@ -34,13 +36,16 @@ public class LoginUser
     private JButton b_cancel4;
     private JButton b_add4;
     private JButton b_cancel5;
-    private JButton b_add_diary5;
+    private JButton b_edit_diary5;
     private JLabel l_date5;
-    private JLabel l_user5;
     private JLabel password_panel;
     private JTextField t_title4;
     private JTextArea t_a_diary4;
     private JLabel l_data4;
+    private JComboBox c_b_data5;
+    private JComboBox c_b_title5;
+    private JLabel l_data_edition5;
+    private JButton b_exit3;
     private JTextField loginJTextField;
     private JPasswordField passwordJTextField;
     private JButton loginJButton;
@@ -52,7 +57,7 @@ public class LoginUser
         sql_connected.createTable_window_log();
         sql_connected.createTable_diary_text();
         sql_connected.createTable_edit_diary();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd HH:mm:ss");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         JScrollPane sp = new JScrollPane(t_a_diary4, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         add_diaryPanel.add(sp);
         b_login.addActionListener(new ActionListener()
@@ -169,6 +174,19 @@ public class LoginUser
             {
                 diary_menuPanel.setVisible(false);
                 edit_diaryPanel.setVisible(true);
+                c_b_data5.removeAllItems();
+                ArrayList<String> arrays = new ArrayList<>();
+                try
+                {
+                    arrays = sql_connected.get_date_from_date_text(login_name);
+                } catch (Exception e1)
+                {
+                    e1.printStackTrace();
+                }
+                for(String a : arrays)
+                {
+                    c_b_data5.addItem(a);
+                }
             }
         });
         b_cancel4.addActionListener(new ActionListener()
@@ -185,38 +203,129 @@ public class LoginUser
             @Override
             public void actionPerformed(ActionEvent e)
             {
-
-
-                String title = t_title4.getText();
-                String diary = t_a_diary4.getText();
-                String date1 = l_data4.getText();
-                int id_diary_text;
-                int id_log;
-                if (title.equals(""))
+                if (flag_edit == false)
                 {
-                    JOptionPane.showMessageDialog(null, "Wrong!\nempty title");
-                    return;
+                    String title = t_title4.getText();
+                    String diary = t_a_diary4.getText();
+                    String date1 = l_data4.getText();
+                    int id_diary_text;
+                    int id_log;
+                    if (title.equals(""))
+                    {
+                        JOptionPane.showMessageDialog(null, "Wrong!\nempty title");
+                        return;
+                    } else if (diary.equals(""))
+                    {
+                        JOptionPane.showMessageDialog(null, "Wrong!\nempty text diary");
+                        return;
+                    }
+                    try
+                    {
+                        sql_connected.post_diary(title, diary, date1);
+                        id_diary_text = sql_connected.get_id_diary_text(title);
+                        id_log = sql_connected.get_id(login_name);
+                        sql_connected.post_edit_diary(id_log, id_diary_text, date1);
+                        JOptionPane.showMessageDialog(null, "adding diary complete");
+
+                    } catch (Exception e1)
+                    {
+                        e1.printStackTrace();
+                    }
                 }
-                else if (diary.equals(""))
+                else
                 {
-                    JOptionPane.showMessageDialog(null, "Wrong!\nempty text diary");
-                    return;
+                    try
+                    {
+                        sql_connected.update_diary_text(t_title4.getText(),l_data4.getText(), t_a_diary4.getText());
+                        JOptionPane.showMessageDialog(null, "edit diary complete");
+                    } catch (Exception e1)
+                    {
+                        e1.printStackTrace();
+                    }
+                    //przycisk zmiany edycji
                 }
+                flag_edit = false;
+                add_diaryPanel.setVisible(false);
+                diary_menuPanel.setVisible(true);
+
+            }
+        });
+        c_b_data5.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                c_b_title5.removeAllItems();
+                ArrayList<String> arrays = new ArrayList<>();
                 try
                 {
-                    sql_connected.post_diary(title, diary, date1);
-                    id_diary_text = sql_connected.get_id_diary_text(title);
-                    id_log = sql_connected.get_id(login_name);
-                    sql_connected.post_edit_diary(id_log, id_diary_text, date1);
-                    JOptionPane.showMessageDialog(null, "adding diary complete");
-
+                    arrays = sql_connected.get_title_from_date_text((String)c_b_data5.getSelectedItem());
                 } catch (Exception e1)
                 {
                     e1.printStackTrace();
                 }
-                add_diaryPanel.setVisible(false);
-                diary_menuPanel.setVisible(true);
+                for(String a : arrays)
+                {
+                    c_b_title5.addItem(a);
+                }
+            }
 
+        });
+        c_b_title5.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                String last_data_edition = null;
+                try
+                {
+                    last_data_edition = sql_connected.get_last_data_eition((String)c_b_title5.getSelectedItem());
+                } catch (Exception e1)
+                {
+                    e1.printStackTrace();
+                }
+                l_data_edition5.setText(last_data_edition);
+            }
+        });
+        b_cancel5.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                diary_menuPanel.setVisible(true);
+                edit_diaryPanel.setVisible(false);
+            }
+        });
+        b_edit_diary5.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                String title = (String)c_b_title5.getSelectedItem();
+
+                Date date = new Date();
+                String date1 = dateFormat.format(date);
+                l_data4.setText(date1);
+                t_title4.setText(title);
+                try
+                {
+                    t_a_diary4.setText(sql_connected.get_diary_text(title));
+                } catch (Exception e1)
+                {
+                    e1.printStackTrace();
+                }
+                flag_edit = true;
+                edit_diaryPanel.setVisible(false);
+                add_diaryPanel.setVisible(true);
+            }
+        });
+        b_exit3.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent e)
+            {
+                loginPanel.setVisible(true);
+                diary_menuPanel.setVisible(false);
             }
         });
     }
